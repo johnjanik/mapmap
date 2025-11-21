@@ -96,10 +96,10 @@ pub struct OscillatorRenderer {
     distortion_pipeline: wgpu::RenderPipeline,
 
     // Bind group layouts
-    sim_texture_layout: wgpu::BindGroupLayout,
-    sim_uniform_layout: wgpu::BindGroupLayout,
+    _sim_texture_layout: wgpu::BindGroupLayout,
+    _sim_uniform_layout: wgpu::BindGroupLayout,
     dist_texture_layout: wgpu::BindGroupLayout,
-    dist_uniform_layout: wgpu::BindGroupLayout,
+    _dist_uniform_layout: wgpu::BindGroupLayout,
 
     // Phase textures (ping-pong)
     phase_texture_a: wgpu::Texture,
@@ -437,10 +437,10 @@ impl OscillatorRenderer {
         Ok(Self {
             simulation_pipeline,
             distortion_pipeline,
-            sim_texture_layout,
-            sim_uniform_layout,
+            _sim_texture_layout: sim_texture_layout,
+            _sim_uniform_layout: sim_uniform_layout,
             dist_texture_layout,
-            dist_uniform_layout,
+            _dist_uniform_layout: dist_uniform_layout,
             phase_texture_a,
             phase_view_a,
             phase_texture_b,
