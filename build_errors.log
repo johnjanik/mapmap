@@ -1,0 +1,17 @@
+   Compiling mapmap-ui v0.1.0 (/home/john/projects/mapmap/crates/mapmap-ui)
+error[E0499]: cannot borrow `*config.rings` as mutable more than once at a time
+    --> crates/mapmap-ui/src/lib.rs:1277:36
+     |
+1272 |                         let ring = &mut config.rings[i];
+     |                                    -------------------- first mutable borrow occurs here
+...
+1277 |                             .build(|| {
+     |                                    ^^ second mutable borrow occurs here
+1278 |                                 ui.slider("Distance", 0.0, 1.0, &mut ring.distance);
+     |                                                                      ------------- first borrow later captured here by closure
+...
+1294 |                                     config.rings[i] = mapmap_core::RingParams::default();
+     |                                     ------------ second borrow occurs due to use of `*config.rings` in closure
+
+For more information about this error, try `rustc --explain E0499`.
+error: could not compile `mapmap-ui` (lib) due to 1 previous error
