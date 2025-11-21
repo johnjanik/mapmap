@@ -1,0 +1,79 @@
+warning: fields `sim_texture_layout`, `sim_uniform_layout`, and `dist_uniform_layout` are never read
+   --> crates/mapmap-render/src/oscillator_renderer.rs:99:5
+    |
+ 93 | pub struct OscillatorRenderer {
+    |            ------------------ fields in this struct
+...
+ 99 |     sim_texture_layout: wgpu::BindGroupLayout,
+    |     ^^^^^^^^^^^^^^^^^^
+100 |     sim_uniform_layout: wgpu::BindGroupLayout,
+    |     ^^^^^^^^^^^^^^^^^^
+101 |     dist_texture_layout: wgpu::BindGroupLayout,
+102 |     dist_uniform_layout: wgpu::BindGroupLayout,
+    |     ^^^^^^^^^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `mapmap-render` (lib) generated 1 warning
+   Compiling mapmap-ui v0.1.0 (/home/john/projects/mapmap/crates/mapmap-ui)
+error[E0277]: the trait bound `i32: AsRef<str>` is not satisfied
+    --> crates/mapmap-ui/src/lib.rs:1270:36
+     |
+1270 |                         ui.push_id(i as i32);
+     |                            ------- ^^^^^^^^ the trait `AsRef<str>` is not implemented for `i32`
+     |                            |
+     |                            required by a bound introduced by this call
+     |
+note: required by a bound in `imgui::stacks::<impl imgui::Ui>::push_id`
+    --> /home/john/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/imgui-0.11.0/src/stacks.rs:460:35
+     |
+ 460 |     pub fn push_id(&self, s: impl AsRef<str>) -> IdStackToken<'_> {
+     |                                   ^^^^^^^^^^ required by this bound in `imgui::stacks::<impl Ui>::push_id`
+
+error[E0061]: this method takes 1 argument but 0 arguments were supplied
+    --> crates/mapmap-ui/src/lib.rs:1277:30
+     |
+1277 | ...                   .build()
+     |                        ^^^^^-- argument #1 is missing
+     |
+note: method defined here
+    --> /home/john/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/imgui-0.11.0/src/widget/tree.rs:324:12
+     |
+ 324 |     pub fn build<R, F: FnOnce() -> R>(self, f: F) -> Option<R> {
+     |            ^^^^^
+help: provide the argument
+     |
+1277 |                             .build(/* f */)
+     |                                    +++++++
+
+error[E0308]: mismatched types
+    --> crates/mapmap-ui/src/lib.rs:1275:28
+     |
+1275 |                           if ui.tree_node_config(format!("Ring {}", i + 1))
+     |  ____________________________^
+1276 | |                             .default_open(is_active)
+1277 | |                             .build()
+     | |____________________________________^ expected `bool`, found `Option<_>`
+     |
+     = note: expected type `bool`
+                found enum `std::option::Option<_>`
+help: consider using `Option::expect` to unwrap the `std::option::Option<_>` value, panicking if the value is an `Option::None`
+     |
+1277 |                             .build().expect("REASON")
+     |                                     +++++++++++++++++
+
+error[E0599]: no method named `tree_pop` found for reference `&imgui::Ui` in the current scope
+    --> crates/mapmap-ui/src/lib.rs:1306:32
+     |
+1306 | ...                   ui.tree_pop();
+     |                          ^^^^^^^^ method not found in `&imgui::Ui`
+
+error[E0599]: no method named `pop_id` found for reference `&imgui::Ui` in the current scope
+    --> crates/mapmap-ui/src/lib.rs:1309:28
+     |
+1309 |                         ui.pop_id();
+     |                            ^^^^^^ method not found in `&imgui::Ui`
+
+Some errors have detailed explanations: E0061, E0277, E0308, E0599.
+For more information about an error, try `rustc --explain E0061`.
+error: could not compile `mapmap-ui` (lib) due to 5 previous errors
