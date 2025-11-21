@@ -1269,23 +1269,22 @@ impl AppUI {
                     for i in 0..4 {
                         let _id = ui.push_id_usize(i);
 
-                        let ring = &mut config.rings[i];
-                        let is_active = ring.distance > 0.0 || ring.width > 0.0 || ring.coupling.abs() > 0.01;
+                        let is_active = config.rings[i].distance > 0.0 || config.rings[i].width > 0.0 || config.rings[i].coupling.abs() > 0.01;
 
                         if let Some(_token) = ui.tree_node_config(format!("Ring {}", i + 1))
                             .default_open(is_active)
                             .build(|| {
-                                ui.slider("Distance", 0.0, 1.0, &mut ring.distance);
+                                ui.slider("Distance", 0.0, 1.0, &mut config.rings[i].distance);
                                 if ui.is_item_hovered() {
                                     ui.tooltip_text("Distance from center (0-1)");
                                 }
 
-                                ui.slider("Width", 0.0, 1.0, &mut ring.width);
+                                ui.slider("Width", 0.0, 1.0, &mut config.rings[i].width);
                                 if ui.is_item_hovered() {
                                     ui.tooltip_text("Ring width (0-1)");
                                 }
 
-                                ui.slider("Coupling", -5.0, 5.0, &mut ring.coupling);
+                                ui.slider("Coupling", -5.0, 5.0, &mut config.rings[i].coupling);
                                 if ui.is_item_hovered() {
                                     ui.tooltip_text("Negative = anti-sync, Positive = sync");
                                 }
