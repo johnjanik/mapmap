@@ -213,6 +213,7 @@ pub struct AppUI {
     pub show_outputs: bool,          // Phase 2
     pub show_edge_blend: bool,       // Phase 2
     pub show_color_calibration: bool, // Phase 2
+    pub show_oscillator: bool,       // Oscillator distortion effect
     pub playback_speed: f32,
     pub looping: bool,
     // Phase 1: Advanced playback state
@@ -238,6 +239,7 @@ impl Default for AppUI {
             show_outputs: true,
             show_edge_blend: false,  // Show only when output selected
             show_color_calibration: false,  // Show only when output selected
+            show_oscillator: true,
             playback_speed: 1.0,
             looping: true,
             playback_direction: mapmap_media::PlaybackDirection::Forward,
@@ -399,6 +401,7 @@ impl AppUI {
                 ui.checkbox("Show Mappings", &mut self.show_mappings);
                 ui.checkbox("Show Transforms", &mut self.show_transforms);
                 ui.checkbox("Show Master Controls", &mut self.show_master_controls);
+                ui.checkbox("Show Oscillator", &mut self.show_oscillator);
                 ui.checkbox("Show Stats", &mut self.show_stats);
                 ui.separator();
                 if ui.menu_item("Toggle Fullscreen") {
@@ -1089,6 +1092,222 @@ impl AppUI {
 
                 if ui.button("Reset to Defaults") {
                     *cal = mapmap_core::ColorCalibration::default();
+                }
+            });
+    }
+
+    /// Render oscillator distortion effect control panel
+    pub fn render_oscillator_panel(&mut self, ui: &Ui, config: &mut mapmap_core::OscillatorConfig) {
+        if !self.show_oscillator {
+            return;
+        }
+
+        ui.window("Oscillator Distortion")
+            .size([450.0, 750.0], Condition::FirstUseEver)
+            .position([870.0, 100.0], Condition::FirstUseEver)
+            .build(|| {
+                // Master enable
+                ui.checkbox("Enable Effect", &mut config.enabled);
+                ui.separator();
+
+                // Preset buttons
+                ui.text("Quick Presets:");
+                if ui.button("Subtle") {
+                    *config = mapmap_core::OscillatorConfig::preset_subtle();
+                }
+                ui.same_line();
+                if ui.button("Dramatic") {
+                    *config = mapmap_core::OscillatorConfig::preset_dramatic();
+                }
+                ui.same_line();
+                if ui.button("Rings") {
+                    *config = mapmap_core::OscillatorConfig::preset_rings();
+                }
+                ui.same_line();
+                if ui.button("Reset") {
+                    *config = mapmap_core::OscillatorConfig::default();
+                }
+
+                ui.separator();
+
+                // Distortion parameters
+                ui.text("Distortion Parameters");
+                ui.slider("Amount", 0.0, 1.0, &mut config.distortion_amount);
+                if ui.is_item_hovered() {
+                    ui.tooltip_text("Intensity of the distortion effect");
+                }
+
+                ui.slider("Scale", 0.0, 0.1, &mut config.distortion_scale);
+                if ui.is_item_hovered() {
+                    ui.tooltip_text("Spatial scale of distortion");
+                }
+
+                ui.slider("Speed", 0.0, 5.0, &mut config.distortion_speed);
+                if ui.is_item_hovered() {
+                    ui.tooltip_text("Animation speed");
+                }
+
+                ui.separator();
+
+                // Visual overlay
+                ui.text("Visual Overlay");
+                ui.slider("Overlay Opacity", 0.0, 1.0, &mut config.overlay_opacity);
+
+                // Color mode combo
+                let color_modes = ["Off", "Rainbow", "Black & White", "Complementary"];
+                let mut color_idx = match config.color_mode {
+                    mapmap_core::ColorMode::Off => 0,
+                    mapmap_core::ColorMode::Rainbow => 1,
+                    mapmap_core::ColorMode::BlackWhite => 2,
+                    mapmap_core::ColorMode::Complementary => 3,
+                };
+
+                if ui.combo("Color Mode", &mut color_idx, &color_modes, |item| {
+                    std::borrow::Cow::Borrowed(item)
+                }) {
+                    config.color_mode = match color_idx {
+                        0 => mapmap_core::ColorMode::Off,
+                        1 => mapmap_core::ColorMode::Rainbow,
+                        2 => mapmap_core::ColorMode::BlackWhite,
+                        3 => mapmap_core::ColorMode::Complementary,
+                        _ => mapmap_core::ColorMode::Off,
+                    };
+                }
+
+                ui.separator();
+
+                // Simulation parameters
+                ui.text("Simulation Parameters");
+
+                // Resolution combo
+                let res_names = ["Low (128×128)", "Medium (256×256)", "High (512×512)"];
+                let mut res_idx = match config.simulation_resolution {
+                    mapmap_core::SimulationResolution::Low => 0,
+                    mapmap_core::SimulationResolution::Medium => 1,
+                    mapmap_core::SimulationResolution::High => 2,
+                };
+
+                if ui.combo("Resolution", &mut res_idx, &res_names, |item| {
+                    std::borrow::Cow::Borrowed(item)
+                }) {
+                    config.simulation_resolution = match res_idx {
+                        0 => mapmap_core::SimulationResolution::Low,
+                        1 => mapmap_core::SimulationResolution::Medium,
+                        2 => mapmap_core::SimulationResolution::High,
+                        _ => mapmap_core::SimulationResolution::Medium,
+                    };
+                }
+                if ui.is_item_hovered() {
+                    ui.tooltip_text("Higher resolution = more detail but slower");
+                }
+
+                ui.slider("Kernel Radius", 1.0, 64.0, &mut config.kernel_radius);
+                if ui.is_item_hovered() {
+                    ui.tooltip_text("Coupling interaction distance");
+                }
+
+                ui.slider("Noise Amount", 0.0, 1.0, &mut config.noise_amount);
+                if ui.is_item_hovered() {
+                    ui.tooltip_text("Random variation in oscillation");
+                }
+
+                ui.slider("Frequency Min (Hz)", 0.0, 10.0, &mut config.frequency_min);
+                ui.slider("Frequency Max (Hz)", 0.0, 10.0, &mut config.frequency_max);
+
+                ui.separator();
+
+                // Coordinate mode
+                let coord_modes = ["Cartesian", "Log-Polar"];
+                let mut coord_idx = match config.coordinate_mode {
+                    mapmap_core::CoordinateMode::Cartesian => 0,
+                    mapmap_core::CoordinateMode::LogPolar => 1,
+                };
+
+                if ui.combo("Coordinate Mode", &mut coord_idx, &coord_modes, |item| {
+                    std::borrow::Cow::Borrowed(item)
+                }) {
+                    config.coordinate_mode = match coord_idx {
+                        0 => mapmap_core::CoordinateMode::Cartesian,
+                        1 => mapmap_core::CoordinateMode::LogPolar,
+                        _ => mapmap_core::CoordinateMode::Cartesian,
+                    };
+                }
+                if ui.is_item_hovered() {
+                    ui.tooltip_text("Log-Polar creates radial/spiral patterns");
+                }
+
+                // Phase initialization mode
+                let phase_modes = ["Random", "Uniform", "Plane H", "Plane V", "Diagonal"];
+                let mut phase_idx = match config.phase_init_mode {
+                    mapmap_core::PhaseInitMode::Random => 0,
+                    mapmap_core::PhaseInitMode::Uniform => 1,
+                    mapmap_core::PhaseInitMode::PlaneHorizontal => 2,
+                    mapmap_core::PhaseInitMode::PlaneVertical => 3,
+                    mapmap_core::PhaseInitMode::PlaneDiagonal => 4,
+                };
+
+                if ui.combo("Phase Init", &mut phase_idx, &phase_modes, |item| {
+                    std::borrow::Cow::Borrowed(item)
+                }) {
+                    config.phase_init_mode = match phase_idx {
+                        0 => mapmap_core::PhaseInitMode::Random,
+                        1 => mapmap_core::PhaseInitMode::Uniform,
+                        2 => mapmap_core::PhaseInitMode::PlaneHorizontal,
+                        3 => mapmap_core::PhaseInitMode::PlaneVertical,
+                        4 => mapmap_core::PhaseInitMode::PlaneDiagonal,
+                        _ => mapmap_core::PhaseInitMode::Random,
+                    };
+                }
+                if ui.is_item_hovered() {
+                    ui.tooltip_text("Initial phase pattern for oscillators");
+                }
+
+                ui.separator();
+
+                // Coupling rings
+                if ui.collapsing_header("Coupling Rings (Advanced)", TreeNodeFlags::empty()) {
+                    for i in 0..4 {
+                        ui.push_id(i as i32);
+
+                        let ring = &mut config.rings[i];
+                        let is_active = ring.distance > 0.0 || ring.width > 0.0 || ring.coupling.abs() > 0.01;
+
+                        if ui.tree_node_config(format!("Ring {}", i + 1))
+                            .default_open(is_active)
+                            .build()
+                        {
+                            ui.slider("Distance", 0.0, 1.0, &mut ring.distance);
+                            if ui.is_item_hovered() {
+                                ui.tooltip_text("Distance from center (0-1)");
+                            }
+
+                            ui.slider("Width", 0.0, 1.0, &mut ring.width);
+                            if ui.is_item_hovered() {
+                                ui.tooltip_text("Ring width (0-1)");
+                            }
+
+                            ui.slider("Coupling", -5.0, 5.0, &mut ring.coupling);
+                            if ui.is_item_hovered() {
+                                ui.tooltip_text("Negative = anti-sync, Positive = sync");
+                            }
+
+                            if ui.button("Reset Ring") {
+                                config.rings[i] = mapmap_core::RingParams::default();
+                            }
+                            ui.same_line();
+                            if ui.button("Clear Ring") {
+                                config.rings[i] = mapmap_core::RingParams {
+                                    distance: 0.0,
+                                    width: 0.0,
+                                    coupling: 0.0,
+                                };
+                            }
+
+                            ui.tree_pop();
+                        }
+
+                        ui.pop_id();
+                    }
                 }
             });
     }
