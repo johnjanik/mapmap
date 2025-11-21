@@ -1267,46 +1267,43 @@ impl AppUI {
                 // Coupling rings
                 if ui.collapsing_header("Coupling Rings (Advanced)", TreeNodeFlags::empty()) {
                     for i in 0..4 {
-                        ui.push_id(i as i32);
+                        let _id = ui.push_id_usize(i);
 
                         let ring = &mut config.rings[i];
                         let is_active = ring.distance > 0.0 || ring.width > 0.0 || ring.coupling.abs() > 0.01;
 
-                        if ui.tree_node_config(format!("Ring {}", i + 1))
+                        if let Some(_token) = ui.tree_node_config(format!("Ring {}", i + 1))
                             .default_open(is_active)
-                            .build()
+                            .build(|| {
+                                ui.slider("Distance", 0.0, 1.0, &mut ring.distance);
+                                if ui.is_item_hovered() {
+                                    ui.tooltip_text("Distance from center (0-1)");
+                                }
+
+                                ui.slider("Width", 0.0, 1.0, &mut ring.width);
+                                if ui.is_item_hovered() {
+                                    ui.tooltip_text("Ring width (0-1)");
+                                }
+
+                                ui.slider("Coupling", -5.0, 5.0, &mut ring.coupling);
+                                if ui.is_item_hovered() {
+                                    ui.tooltip_text("Negative = anti-sync, Positive = sync");
+                                }
+
+                                if ui.button("Reset Ring") {
+                                    config.rings[i] = mapmap_core::RingParams::default();
+                                }
+                                ui.same_line();
+                                if ui.button("Clear Ring") {
+                                    config.rings[i] = mapmap_core::RingParams {
+                                        distance: 0.0,
+                                        width: 0.0,
+                                        coupling: 0.0,
+                                    };
+                                }
+                            })
                         {
-                            ui.slider("Distance", 0.0, 1.0, &mut ring.distance);
-                            if ui.is_item_hovered() {
-                                ui.tooltip_text("Distance from center (0-1)");
-                            }
-
-                            ui.slider("Width", 0.0, 1.0, &mut ring.width);
-                            if ui.is_item_hovered() {
-                                ui.tooltip_text("Ring width (0-1)");
-                            }
-
-                            ui.slider("Coupling", -5.0, 5.0, &mut ring.coupling);
-                            if ui.is_item_hovered() {
-                                ui.tooltip_text("Negative = anti-sync, Positive = sync");
-                            }
-
-                            if ui.button("Reset Ring") {
-                                config.rings[i] = mapmap_core::RingParams::default();
-                            }
-                            ui.same_line();
-                            if ui.button("Clear Ring") {
-                                config.rings[i] = mapmap_core::RingParams {
-                                    distance: 0.0,
-                                    width: 0.0,
-                                    coupling: 0.0,
-                                };
-                            }
-
-                            ui.tree_pop();
                         }
-
-                        ui.pop_id();
                     }
                 }
             });
