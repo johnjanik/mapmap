@@ -1,10 +1,11 @@
 # MapMap Installation Guide for Ubuntu 24.04
 
-This guide provides step-by-step instructions for building and installing MapMap on Ubuntu 24.04 LTS (Noble Numbat).
+This guide provides step-by-step instructions for building and installing MapMap on Ubuntu 24.04 LTS (Noble Numbat).<br/>
+Those instructions are confirmed to work also for Ubuntu 22.04.5 LTS.
 
 ## Prerequisites
 
-- Ubuntu 24.04 LTS
+- Ubuntu 24.04/22.04 LTS
 - Sudo access for package installation
 - Approximately 500 MB of free disk space
 - Graphical display (X11 or Wayland)
