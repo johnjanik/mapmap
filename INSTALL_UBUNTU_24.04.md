@@ -16,8 +16,8 @@ This guide provides step-by-step instructions for building and installing MapMap
 Install the Qt5 framework and development tools required for building MapMap:
 
 ```bash
-sudo apt-get update
-sudo apt-get install -y \
+sudo apt update
+sudo apt install -y \
       liblo-dev \
       qttools5-dev-tools \
       qtmultimedia5-dev \
@@ -37,7 +37,7 @@ sudo apt-get install -y \
 Install GStreamer for video playback and processing:
 
 ```bash
-sudo apt-get install -y \
+sudo apt install -y \
       libgstreamer1.0-dev \
       libgstreamer-plugins-base1.0-dev \
       gstreamer1.0-plugins-bad \
@@ -171,8 +171,8 @@ For convenience, you can use this automated installation script:
 set -e
 
 echo "==> Installing Qt5 and dependencies..."
-sudo apt-get update
-sudo apt-get install -y \
+sudo apt update
+sudo apt install -y \
       liblo-dev \
       qttools5-dev-tools \
       qtmultimedia5-dev \
@@ -182,7 +182,7 @@ sudo apt-get install -y \
       qtbase5-dev
 
 echo "==> Installing GStreamer..."
-sudo apt-get install -y \
+sudo apt install -y \
       libgstreamer1.0-dev \
       libgstreamer-plugins-base1.0-dev \
       gstreamer1.0-plugins-bad \
@@ -263,7 +263,7 @@ ssh -X user@remote
 If you encounter build errors, ensure all dependencies are installed:
 
 ```bash
-sudo apt-get install -y build-essential
+sudo apt install -y build-essential
 ```
 
 ### GStreamer Plugin Issues
@@ -271,7 +271,7 @@ sudo apt-get install -y build-essential
 If videos don't play, install additional codecs:
 
 ```bash
-sudo apt-get install -y ubuntu-restricted-extras
+sudo apt install -y ubuntu-restricted-extras
 ```
 
 ## Additional Resources
