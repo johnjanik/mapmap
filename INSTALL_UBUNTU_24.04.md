@@ -104,11 +104,13 @@ Check that the executable was created successfully:
 
 ```bash
 ls -lh mapmap
+file --mime --brief mapmap
 ```
 
 Expected output:
 ```
 -rwxr-xr-x 1 user user 41M Nov 10 12:28 mapmap
+application/x-pie-executable; charset=binary
 ```
 
 Test the application:
@@ -204,6 +206,7 @@ make -j$(nproc)
 
 echo "==> Build complete!"
 ls -lh mapmap
+file --mime --brief mapmap
 ./mapmap --version
 
 echo ""
