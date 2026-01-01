@@ -1,10 +1,11 @@
 # MapMap Installation Guide for Ubuntu 24.04
 
-This guide provides step-by-step instructions for building and installing MapMap on Ubuntu 24.04 LTS (Noble Numbat).
+This guide provides step-by-step instructions for building and installing MapMap on Ubuntu 24.04 LTS (Noble Numbat).<br/>
+Those instructions are confirmed to work also for Ubuntu 22.04.5 LTS.
 
 ## Prerequisites
 
-- Ubuntu 24.04 LTS
+- Ubuntu 24.04/22.04 LTS
 - Sudo access for package installation
 - Approximately 500 MB of free disk space
 - Graphical display (X11 or Wayland)
@@ -16,8 +17,8 @@ This guide provides step-by-step instructions for building and installing MapMap
 Install the Qt5 framework and development tools required for building MapMap:
 
 ```bash
-sudo apt-get update
-sudo apt-get install -y \
+sudo apt update
+sudo apt install -y \
       liblo-dev \
       qttools5-dev-tools \
       qtmultimedia5-dev \
@@ -37,7 +38,7 @@ sudo apt-get install -y \
 Install GStreamer for video playback and processing:
 
 ```bash
-sudo apt-get install -y \
+sudo apt install -y \
       libgstreamer1.0-dev \
       libgstreamer-plugins-base1.0-dev \
       gstreamer1.0-plugins-bad \
@@ -104,11 +105,13 @@ Check that the executable was created successfully:
 
 ```bash
 ls -lh mapmap
+file --mime --brief mapmap
 ```
 
 Expected output:
 ```
 -rwxr-xr-x 1 user user 41M Nov 10 12:28 mapmap
+application/x-pie-executable; charset=binary
 ```
 
 Test the application:
@@ -171,8 +174,8 @@ For convenience, you can use this automated installation script:
 set -e
 
 echo "==> Installing Qt5 and dependencies..."
-sudo apt-get update
-sudo apt-get install -y \
+sudo apt update
+sudo apt install -y \
       liblo-dev \
       qttools5-dev-tools \
       qtmultimedia5-dev \
@@ -182,7 +185,7 @@ sudo apt-get install -y \
       qtbase5-dev
 
 echo "==> Installing GStreamer..."
-sudo apt-get install -y \
+sudo apt install -y \
       libgstreamer1.0-dev \
       libgstreamer-plugins-base1.0-dev \
       gstreamer1.0-plugins-bad \
@@ -204,6 +207,7 @@ make -j$(nproc)
 
 echo "==> Build complete!"
 ls -lh mapmap
+file --mime --brief mapmap
 ./mapmap --version
 
 echo ""
@@ -263,7 +267,7 @@ ssh -X user@remote
 If you encounter build errors, ensure all dependencies are installed:
 
 ```bash
-sudo apt-get install -y build-essential
+sudo apt install -y build-essential
 ```
 
 ### GStreamer Plugin Issues
@@ -271,7 +275,7 @@ sudo apt-get install -y build-essential
 If videos don't play, install additional codecs:
 
 ```bash
-sudo apt-get install -y ubuntu-restricted-extras
+sudo apt install -y ubuntu-restricted-extras
 ```
 
 ## Additional Resources
